@@ -1,10 +1,50 @@
 const express = require("express");
-const createNewUser = require("../controllers/userController");
+const jwt = require('jsonwebtoken');
+
+const {
+  createNewUser,
+  authenticateUser,
+} = require("../controllers/userController");
+const generateToken = require("../utils/generateToken");
 const router = express.Router();
+
+
+
+
+router.post("/", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
+    if (!(trimmedEmail && trimmedPassword)) {
+      throw new Error("Empty credentials supplied");
+    }
+
+    // Authenticate the user here and obtain the user's unique identifier (e.g., _id)
+    const user = await authenticateUser(trimmedEmail, trimmedPassword);
+
+    if (!user) {
+      throw new Error("Authentication failed");
+    }
+
+    // Generate a JWT token with user._id and user.email in the payload
+    const tokenData = {userId: user._id, email: user.email}
+    const token = await generateToken(tokenData);
+    user.token = token;
+    res.status(200).json({ user});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 router.post("/signup", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    var { name, email, password } = req.body;
+    name = name.trim();
+    email = email.trim();
+    password = password.trim();
     if (!(name && email && password)) {
       throw Error("Empty input fields");
     } else if (!/^[a-zA-Z ]*$/.test(name)) {

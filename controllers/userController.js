@@ -1,5 +1,27 @@
 const User = require("../model/user");
-const hashData = require("../utils/hashData");
+const generateToken = require("../utils/generateToken");
+const { hashData, verifyData } = require("../utils/hashData");
+const bcrypt = require("bcrypt");
+
+async function authenticateUser(email, password) {
+  // Replace this with your actual user retrieval logic based on the provided email
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  // Compare the provided password with the hashed password from the user object
+  const passwordMatch = await bcrypt.compare(password, user.password);
+
+  if (!passwordMatch) {
+    throw new Error("Password incorrect");
+  }
+
+  return user;
+}
+
+
 const createNewUser = async (data) => {
   try {
     const { name, email, password } = data;
@@ -27,4 +49,4 @@ const createNewUser = async (data) => {
   }
 };
 
-module.exports = createNewUser;
+module.exports = { createNewUser, authenticateUser };
