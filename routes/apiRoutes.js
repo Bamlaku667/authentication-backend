@@ -1,5 +1,6 @@
 const express = require("express");
 const jwt = require('jsonwebtoken');
+const auth = require('../middlewares/auth')
 
 const {
   createNewUser,
@@ -9,7 +10,9 @@ const generateToken = require("../utils/generateToken");
 const router = express.Router();
 
 
-
+router.get('/private_data', auth ,  (req, res) => {
+  res.status(200).send(`accessing private data of ${req.user.email}`);
+})
 
 router.post("/", async (req, res) => {
   try {
@@ -38,6 +41,10 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+router.get('/private_data', auth ,  (req, res) => {
+  res.status(200).send(`accessing private data of ${req.user.email}`);
+})
 
 router.post("/signup", async (req, res) => {
   try {
