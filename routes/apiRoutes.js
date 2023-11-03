@@ -43,7 +43,7 @@ router.post("/", async (req, res) => {
 });
 
 router.get('/private_data', auth ,  (req, res) => {
-  res.status(200).send(`accessing private data of ${req.user.email}`);
+  res.status(200).send(`accessing private data of ${req.currentUser.email}`);
 })
 
 router.post("/signup", async (req, res) => {
