@@ -27,8 +27,8 @@ const sendEmail = async (mailOptions) => {
         console.log("Error sending email ", err);
         res.status(500).json({ error: "error sending email" });
       } else {
-        console.log("Email successfully send ", info.response);
-        res.status(500).json({ message: "OTP send to your email" });
+        console.log("Email successfully sent ", info.response);
+        res.status(500).json({ message: "OTP sent to your email" });
       }
     });
   } catch (error) {
